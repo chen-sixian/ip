@@ -22,30 +22,33 @@ public class WWaffle {
         while (!command.equals("bye")) {
             System.out.println(line);
             try {
-                if (command.equals("list")) {
+                switch (CommandType.from(command)) {
+                case LIST -> {
                     for (int i = 0; i < tasks.size(); i++) {
                         System.out.println((i + 1) + "." + tasks.get(i));
                     }
-                } else if (command.equals("mark") || command.startsWith("mark ")) {
+                }
+                case MARK -> {
                     int taskIndex = parseTaskIndex(command, "mark", tasks.size());
                     tasks.get(taskIndex).markAsDone();
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println("  " + tasks.get(taskIndex));
-                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+                }
+                case UNMARK -> {
                     int taskIndex = parseTaskIndex(command, "unmark", tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println("  " + tasks.get(taskIndex));
-                } else if (command.equals("delete") || command.startsWith("delete ")) {
+                }
+                case DELETE -> {
                     int taskIndex = parseTaskIndex(command, "delete", tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-                } else if (command.equals("todo")) {
-                    throw new WWaffleException("OOPS!!! The description of a todo cannot be empty.");
-                } else if (command.startsWith("todo ")) {
-                    String description = command.substring(5);
+                }
+                case TODO -> {
+                    String description = command.substring("todo".length()).trim();
                     if (description.isBlank()) {
                         throw new WWaffleException("OOPS!!! The description of a todo cannot be empty.");
                     }
@@ -53,10 +56,12 @@ public class WWaffle {
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + tasks.get(tasks.size() - 1));
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-                } else if (command.equals("deadline")) {
-                    throw new WWaffleException("OOPS!!! The description of a deadline cannot be empty.");
-                } else if (command.startsWith("deadline ")) {
-                    String deadlineDetails = command.substring(9);
+                }
+                case DEADLINE -> {
+                    String deadlineDetails = command.substring("deadline".length()).trim();
+                    if (deadlineDetails.isEmpty()) {
+                        throw new WWaffleException("OOPS!!! The description of a deadline cannot be empty.");
+                    }
                     int byIndex = deadlineDetails.indexOf(" /by ");
                     if (byIndex < 0) {
                         throw new WWaffleException("OOPS!!! Use: deadline <description> /by <date or time>.");
@@ -73,10 +78,12 @@ public class WWaffle {
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + tasks.get(tasks.size() - 1));
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-                } else if (command.equals("event")) {
-                    throw new WWaffleException("OOPS!!! The description of an event cannot be empty.");
-                } else if (command.startsWith("event ")) {
-                    String eventDetails = command.substring(6);
+                }
+                case EVENT -> {
+                    String eventDetails = command.substring("event".length()).trim();
+                    if (eventDetails.isEmpty()) {
+                        throw new WWaffleException("OOPS!!! The description of an event cannot be empty.");
+                    }
                     int fromIndex = eventDetails.indexOf(" /from ");
                     if (fromIndex < 0) {
                         throw new WWaffleException(
@@ -101,8 +108,12 @@ public class WWaffle {
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + tasks.get(tasks.size() - 1));
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-                } else {
+                }
+                case UNKNOWN ->
                     throw new WWaffleException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+                case BYE -> {
+                    // The loop exits before this case can be reached.
+                }
                 }
             } catch (WWaffleException e) {
                 System.out.println(e.getMessage());
