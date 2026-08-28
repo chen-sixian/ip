@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class Storage {
      * @param tasks tasks to save
      * @throws IOException if the data file cannot be written
      */
-    public void save(ArrayList<Task> tasks) throws IOException {
+    public void save(List<Task> tasks) throws IOException {
         Path parentDirectory = filePath.getParent();
         if (parentDirectory != null) {
             Files.createDirectories(parentDirectory);
@@ -65,7 +66,9 @@ public class Storage {
             throw new IOException("Invalid task data: " + line);
         }
 
-        Task task = switch (parts[0]) {
+        Task task;
+        try {
+            task = switch (parts[0]) {
             case "T" -> new Todo(parts[2]);
             case "D" -> {
                 if (parts.length != 4) {
@@ -80,7 +83,10 @@ public class Storage {
                 yield new Event(parts[2], parts[3], parts[4]);
             }
             default -> throw new IOException("Unknown task type: " + parts[0]);
-        };
+            };
+        } catch (DateTimeParseException e) {
+            throw new IOException("Invalid deadline date in saved data: " + line, e);
+        }
 
         if (parts[1].equals("1")) {
             task.markAsDone();
