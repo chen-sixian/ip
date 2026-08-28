@@ -76,6 +76,7 @@ public class WWaffle {
         case TODO -> addTodo(command);
         case DEADLINE -> addDeadline(command);
         case EVENT -> addEvent(command);
+        case FIND -> findTasks(command);
         case UNKNOWN -> throw new WWaffleException("Unknown command.");
         case BYE -> {
             // The command loop handles exiting before execution.
@@ -151,6 +152,14 @@ public class WWaffle {
             throw new WWaffleException("An event needs a description, start, and end.");
         }
         addTask(new Event(description, from, to));
+    }
+
+    private void findTasks(String command) throws WWaffleException {
+        String keyword = parser.parseArgument(command, "find");
+        if (keyword.isBlank()) {
+            throw new WWaffleException("Use: find <keyword>.");
+        }
+        ui.showMatchingTasks(tasks.find(keyword));
     }
 
     private void addTask(Task task) throws IOException {

@@ -61,6 +61,23 @@ public class Ui {
         }
     }
 
+    /**
+     * Displays tasks whose descriptions match a search keyword.
+     *
+     * @param tasks matching tasks
+     */
+    public void showMatchingTasks(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            System.out.println(color(DAY_SKY_BLUE, "[i] No matching tasks found."));
+            return;
+        }
+
+        System.out.println(color(ROYAL_BLUE, "[ MATCHES ]"));
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(color(ROYAL_BLUE, "  " + (i + 1) + ". " + tasks.get(i)));
+        }
+    }
+
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println(color(DENIM_BLUE, "[+] TASK ADDED"));
         System.out.println(color(DAY_SKY_BLUE, "    " + task));
