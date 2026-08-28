@@ -18,6 +18,8 @@ public enum CommandType {
     DEADLINE,
     /** Adds an event. */
     EVENT,
+    /** Finds tasks containing a keyword. */
+    FIND,
     /** Exits the application. */
     BYE,
     /** Represents an unsupported command. */

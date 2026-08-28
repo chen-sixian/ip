@@ -3,6 +3,7 @@ package wwaffle.task;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Owns and manages the user's collection of tasks.
@@ -55,6 +56,23 @@ public class TaskList {
      */
     public int getSize() {
         return tasks.size();
+    }
+
+    /**
+     * Finds tasks whose descriptions contain the given keyword, ignoring case.
+     *
+     * @param keyword Text to find in task descriptions.
+     * @return Matching tasks in their original order.
+     */
+    public List<Task> find(String keyword) {
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        ArrayList<Task> matches = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase(Locale.ROOT).contains(normalizedKeyword)) {
+                matches.add(task);
+            }
+        }
+        return Collections.unmodifiableList(matches);
     }
 
     /**

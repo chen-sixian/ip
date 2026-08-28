@@ -77,6 +77,23 @@ public class Ui {
     }
 
     /**
+     * Displays tasks whose descriptions match a search keyword.
+     *
+     * @param tasks Matching tasks.
+     */
+    public void showMatchingTasks(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            System.out.println(applyColor(DAY_SKY_BLUE, "[i] No matching tasks found."));
+            return;
+        }
+
+        System.out.println(applyColor(ROYAL_BLUE, "[ MATCHES ]"));
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(applyColor(ROYAL_BLUE, "  " + (i + 1) + ". " + tasks.get(i)));
+        }
+    }
+
+    /**
      * Shows confirmation that a task was added.
      *
      * @param task Added task.
