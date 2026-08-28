@@ -1,6 +1,19 @@
+package wwaffle;
+
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+
+import wwaffle.command.CommandType;
+import wwaffle.command.Parser;
+import wwaffle.exception.WWaffleException;
+import wwaffle.storage.Storage;
+import wwaffle.task.Deadline;
+import wwaffle.task.Event;
+import wwaffle.task.Task;
+import wwaffle.task.TaskList;
+import wwaffle.task.Todo;
+import wwaffle.ui.Ui;
 
 /**
  * Coordinates user input, task management, and persistent storage.
