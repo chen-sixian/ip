@@ -1,0 +1,104 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Loads and saves WWaffle tasks in a local text file.
+ */
+public class Storage {
+    private final Path filePath;
+
+    /**
+     * Creates storage that uses the specified data file.
+     *
+     * @param filePath path of the data file
+     */
+    public Storage(String filePath) {
+        this.filePath = Path.of(filePath);
+    }
+
+    /**
+     * Loads tasks from the data file.
+     *
+     * @return tasks reconstructed from the saved data
+     * @throws IOException if the data file cannot be read or is malformed
+     */
+    public ArrayList<Task> load() throws IOException {
+        ArrayList<Task> tasks = new ArrayList<>();
+
+        if (!Files.exists(filePath)) {
+            return tasks;
+        }
+
+        for (String line : Files.readAllLines(filePath)) {
+            if (!line.isBlank()) {
+                tasks.add(parseTask(line));
+            }
+        }
+        return tasks;
+    }
+
+    /**
+     * Saves all tasks to the data file.
+     *
+     * @param tasks tasks to save
+     * @throws IOException if the data file cannot be written
+     */
+    public void save(ArrayList<Task> tasks) throws IOException {
+        Path parentDirectory = filePath.getParent();
+        if (parentDirectory != null) {
+            Files.createDirectories(parentDirectory);
+        }
+
+        List<String> lines = new ArrayList<>();
+        for (Task task : tasks) {
+            lines.add(formatTask(task));
+        }
+        Files.write(filePath, lines);
+    }
+
+    private Task parseTask(String line) throws IOException {
+        String[] parts = line.split(" \\| ", -1);
+        if (parts.length < 3) {
+            throw new IOException("Invalid task data: " + line);
+        }
+
+        Task task = switch (parts[0]) {
+            case "T" -> new Todo(parts[2]);
+            case "D" -> {
+                if (parts.length != 4) {
+                    throw new IOException("Invalid deadline data: " + line);
+                }
+                yield new Deadline(parts[2], parts[3]);
+            }
+            case "E" -> {
+                if (parts.length != 5) {
+                    throw new IOException("Invalid event data: " + line);
+                }
+                yield new Event(parts[2], parts[3], parts[4]);
+            }
+            default -> throw new IOException("Unknown task type: " + parts[0]);
+        };
+
+        if (parts[1].equals("1")) {
+            task.markAsDone();
+        }
+        return task;
+    }
+
+    private String formatTask(Task task) throws IOException {
+        String status = task.isDone ? "1" : "0";
+
+        if (task instanceof Todo) {
+            return "T | " + status + " | " + task.description;
+        } else if (task instanceof Deadline deadline) {
+            return "D | " + status + " | " + task.description + " | " + deadline.by;
+        } else if (task instanceof Event event) {
+            return "E | " + status + " | " + task.description
+                    + " | " + event.from + " | " + event.to;
+        }
+        throw new IOException("Unsupported task type");
+    }
+}
