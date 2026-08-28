@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -16,7 +17,14 @@ public class WWaffle {
         System.out.println("What can I do for you?");
         System.out.println(line);
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
+        Storage storage = new Storage("./data/wwaffle.txt");
+        ArrayList<Task> tasks;
+        try {
+            tasks = storage.load();
+        } catch (IOException e) {
+            System.out.println("OOPS!!! I couldn't load your saved tasks.");
+            tasks = new ArrayList<>();
+        }
         String command = scanner.nextLine();
 
         while (!command.equals("bye")) {
@@ -31,18 +39,21 @@ public class WWaffle {
                 case MARK -> {
                     int taskIndex = parseTaskIndex(command, "mark", tasks.size());
                     tasks.get(taskIndex).markAsDone();
+                    storage.save(tasks);
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println("  " + tasks.get(taskIndex));
                 }
                 case UNMARK -> {
                     int taskIndex = parseTaskIndex(command, "unmark", tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
+                    storage.save(tasks);
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println("  " + tasks.get(taskIndex));
                 }
                 case DELETE -> {
                     int taskIndex = parseTaskIndex(command, "delete", tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
+                    storage.save(tasks);
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -53,6 +64,7 @@ public class WWaffle {
                         throw new WWaffleException("OOPS!!! The description of a todo cannot be empty.");
                     }
                     tasks.add(new Todo(description));
+                    storage.save(tasks);
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + tasks.get(tasks.size() - 1));
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -75,6 +87,7 @@ public class WWaffle {
                         throw new WWaffleException("OOPS!!! A deadline must have a date or time after /by.");
                     }
                     tasks.add(new Deadline(description, by));
+                    storage.save(tasks);
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + tasks.get(tasks.size() - 1));
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -105,6 +118,7 @@ public class WWaffle {
                         throw new WWaffleException("OOPS!!! An event must have both start and end times.");
                     }
                     tasks.add(new Event(description, from, to));
+                    storage.save(tasks);
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + tasks.get(tasks.size() - 1));
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -115,7 +129,7 @@ public class WWaffle {
                     // The loop exits before this case can be reached.
                 }
                 }
-            } catch (WWaffleException e) {
+            } catch (WWaffleException | IOException e) {
                 System.out.println(e.getMessage());
             }
             System.out.println(line);
