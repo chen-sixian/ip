@@ -1,3 +1,5 @@
+package wwaffle.task;
+
 /**
  * Represents a task with a description and completion status.
  */
@@ -22,6 +24,14 @@ public class Task {
      */
     public String getStatusIcon() {
         return isDone ? "X" : " ";
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isDone() {
+        return isDone;
     }
 
     /**

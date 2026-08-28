@@ -1,9 +1,16 @@
+package wwaffle.storage;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import wwaffle.task.Deadline;
+import wwaffle.task.Event;
+import wwaffle.task.Task;
+import wwaffle.task.Todo;
 
 /**
  * Loads and saves WWaffle tasks in a local text file.
@@ -95,15 +102,15 @@ public class Storage {
     }
 
     private String formatTask(Task task) throws IOException {
-        String status = task.isDone ? "1" : "0";
+        String status = task.isDone() ? "1" : "0";
 
         if (task instanceof Todo) {
-            return "T | " + status + " | " + task.description;
+            return "T | " + status + " | " + task.getDescription();
         } else if (task instanceof Deadline deadline) {
-            return "D | " + status + " | " + task.description + " | " + deadline.by;
+            return "D | " + status + " | " + task.getDescription() + " | " + deadline.getBy();
         } else if (task instanceof Event event) {
-            return "E | " + status + " | " + task.description
-                    + " | " + event.from + " | " + event.to;
+            return "E | " + status + " | " + task.getDescription()
+                    + " | " + event.getFrom() + " | " + event.getTo();
         }
         throw new IOException("Unsupported task type");
     }

@@ -1,3 +1,7 @@
+package wwaffle.command;
+
+import wwaffle.exception.WWaffleException;
+
 /**
  * Interprets user commands and extracts their arguments.
  */

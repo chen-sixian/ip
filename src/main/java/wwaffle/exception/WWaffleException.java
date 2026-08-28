@@ -1,3 +1,5 @@
+package wwaffle.exception;
+
 /**
  * Represents an input error that WWaffle can explain to the user.
  */

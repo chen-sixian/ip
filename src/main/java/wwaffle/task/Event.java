@@ -1,3 +1,5 @@
+package wwaffle.task;
+
 /**
  * Represents a task that occurs between specified start and end times.
  */
@@ -16,6 +18,14 @@ public class Event extends Task {
         super(description);
         this.from = from;
         this.to = to;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public String getTo() {
+        return to;
     }
 
     /**

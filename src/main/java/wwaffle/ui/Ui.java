@@ -1,5 +1,9 @@
+package wwaffle.ui;
+
 import java.util.List;
 import java.util.Scanner;
+
+import wwaffle.task.Task;
 
 /**
  * Handles terminal input and presentation for WWaffle.

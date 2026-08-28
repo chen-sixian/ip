@@ -1,3 +1,5 @@
+package wwaffle.command;
+
 /**
  * Represents the supported categories of user commands.
  */
