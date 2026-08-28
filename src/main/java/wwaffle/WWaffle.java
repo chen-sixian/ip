@@ -27,7 +27,7 @@ public class WWaffle {
     /**
      * Creates WWaffle using the specified save file.
      *
-     * @param filePath path of the task data file
+     * @param filePath Path of the task data file.
      */
     public WWaffle(String filePath) {
         this.ui = new Ui();
@@ -36,6 +36,11 @@ public class WWaffle {
         this.tasks = new TaskList(loadTasks());
     }
 
+    /**
+     * Starts WWaffle using the default task data file.
+     *
+     * @param args Command-line arguments; unused by WWaffle.
+     */
     public static void main(String[] args) {
         new WWaffle("./data/wwaffle.txt").run();
     }

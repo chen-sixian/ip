@@ -7,7 +7,7 @@ public class WWaffleException extends Exception {
     /**
      * Creates an exception with a user-facing explanation.
      *
-     * @param message explanation of the input error
+     * @param message Explanation of the input error.
      */
     public WWaffleException(String message) {
         super(message);

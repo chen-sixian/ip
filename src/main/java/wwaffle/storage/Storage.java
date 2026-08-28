@@ -21,7 +21,7 @@ public class Storage {
     /**
      * Creates storage that uses the specified data file.
      *
-     * @param filePath path of the data file
+     * @param filePath Path of the data file.
      */
     public Storage(String filePath) {
         this.filePath = Path.of(filePath);
@@ -30,8 +30,8 @@ public class Storage {
     /**
      * Loads tasks from the data file.
      *
-     * @return tasks reconstructed from the saved data
-     * @throws IOException if the data file cannot be read or is malformed
+     * @return Tasks reconstructed from the saved data.
+     * @throws IOException If the data file cannot be read or is malformed.
      */
     public ArrayList<Task> load() throws IOException {
         ArrayList<Task> tasks = new ArrayList<>();
@@ -51,8 +51,8 @@ public class Storage {
     /**
      * Saves all tasks to the data file.
      *
-     * @param tasks tasks to save
-     * @throws IOException if the data file cannot be written
+     * @param tasks Tasks to save.
+     * @throws IOException If the data file cannot be written.
      */
     public void save(List<Task> tasks) throws IOException {
         Path parentDirectory = filePath.getParent();
