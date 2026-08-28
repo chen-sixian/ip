@@ -13,7 +13,7 @@ class DeadlineTest {
     void constructor_validIsoDate_storesDate() {
         Deadline deadline = new Deadline("return book", "2026-12-02");
 
-        assertEquals(LocalDate.of(2026, 12, 2), deadline.getBy());
+        assertEquals(LocalDate.of(2026, 12, 2), deadline.getDueDate());
     }
 
     @Test

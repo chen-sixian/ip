@@ -27,7 +27,7 @@ public class WWaffle {
     /**
      * Creates WWaffle using the specified save file.
      *
-     * @param filePath path of the task data file
+     * @param filePath Path of the task data file.
      */
     public WWaffle(String filePath) {
         this.ui = new Ui();
@@ -36,6 +36,11 @@ public class WWaffle {
         this.tasks = new TaskList(loadTasks());
     }
 
+    /**
+     * Starts WWaffle using the default task data file.
+     *
+     * @param args Command-line arguments; unused by WWaffle.
+     */
     public static void main(String[] args) {
         new WWaffle("./data/wwaffle.txt").run();
     }
@@ -44,7 +49,7 @@ public class WWaffle {
      * Runs the command loop until the user exits.
      */
     public void run() {
-        ui.showWelcome(tasks.size());
+        ui.showWelcome(tasks.getSize());
         String command = ui.readCommand();
 
         while (parser.parseCommandType(command) != CommandType.BYE) {
@@ -69,38 +74,38 @@ public class WWaffle {
 
     private void execute(String command) throws WWaffleException, IOException {
         switch (parser.parseCommandType(command)) {
-        case LIST -> ui.showTaskList(tasks.asList());
-        case MARK -> markTask(command, true);
-        case UNMARK -> markTask(command, false);
-        case DELETE -> deleteTask(command);
-        case TODO -> addTodo(command);
-        case DEADLINE -> addDeadline(command);
-        case EVENT -> addEvent(command);
-        case UNKNOWN -> throw new WWaffleException("Unknown command.");
-        case BYE -> {
-            // The command loop handles exiting before execution.
-        }
+            case LIST -> ui.showTaskList(tasks.getTasks());
+            case MARK -> markTask(command, true);
+            case UNMARK -> markTask(command, false);
+            case DELETE -> deleteTask(command);
+            case TODO -> addTodo(command);
+            case DEADLINE -> addDeadline(command);
+            case EVENT -> addEvent(command);
+            case UNKNOWN -> throw new WWaffleException("Unknown command.");
+            case BYE -> {
+                // The command loop handles exiting before execution.
+            }
         }
     }
 
     private void markTask(String command, boolean isDone) throws WWaffleException, IOException {
         String commandName = isDone ? "mark" : "unmark";
-        int taskIndex = parser.parseTaskIndex(command, commandName, tasks.size());
+        int taskIndex = parser.parseTaskIndex(command, commandName, tasks.getSize());
         Task task = tasks.get(taskIndex);
         if (isDone) {
             task.markAsDone();
         } else {
             task.markAsNotDone();
         }
-        storage.save(tasks.asList());
+        storage.save(tasks.getTasks());
         ui.showTaskMarked(task, isDone);
     }
 
     private void deleteTask(String command) throws WWaffleException, IOException {
-        int taskIndex = parser.parseTaskIndex(command, "delete", tasks.size());
+        int taskIndex = parser.parseTaskIndex(command, "delete", tasks.getSize());
         Task removedTask = tasks.delete(taskIndex);
-        storage.save(tasks.asList());
-        ui.showTaskDeleted(removedTask, tasks.size());
+        storage.save(tasks.getTasks());
+        ui.showTaskDeleted(removedTask, tasks.getSize());
     }
 
     private void addTodo(String command) throws WWaffleException, IOException {
@@ -155,7 +160,7 @@ public class WWaffle {
 
     private void addTask(Task task) throws IOException {
         tasks.add(task);
-        storage.save(tasks.asList());
-        ui.showTaskAdded(task, tasks.size());
+        storage.save(tasks.getTasks());
+        ui.showTaskAdded(task, tasks.getSize());
     }
 }

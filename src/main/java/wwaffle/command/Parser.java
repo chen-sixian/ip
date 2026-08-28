@@ -7,34 +7,40 @@ import wwaffle.exception.WWaffleException;
  */
 public class Parser {
     /**
+     * Creates a parser for WWaffle commands.
+     */
+    public Parser() {
+    }
+
+    /**
      * Identifies the type of a command from its first word.
      *
-     * @param command full command entered by the user
-     * @return matching command type, or {@link CommandType#UNKNOWN}
+     * @param command Full command entered by the user.
+     * @return Matching command type, or {@link CommandType#UNKNOWN}.
      */
     public CommandType parseCommandType(String command) {
         String commandWord = command.split(" ", 2)[0];
         return switch (commandWord) {
-        case "list" -> CommandType.LIST;
-        case "mark" -> CommandType.MARK;
-        case "unmark" -> CommandType.UNMARK;
-        case "delete" -> CommandType.DELETE;
-        case "todo" -> CommandType.TODO;
-        case "deadline" -> CommandType.DEADLINE;
-        case "event" -> CommandType.EVENT;
-        case "bye" -> CommandType.BYE;
-        default -> CommandType.UNKNOWN;
+            case "list" -> CommandType.LIST;
+            case "mark" -> CommandType.MARK;
+            case "unmark" -> CommandType.UNMARK;
+            case "delete" -> CommandType.DELETE;
+            case "todo" -> CommandType.TODO;
+            case "deadline" -> CommandType.DEADLINE;
+            case "event" -> CommandType.EVENT;
+            case "bye" -> CommandType.BYE;
+            default -> CommandType.UNKNOWN;
         };
     }
 
     /**
      * Extracts and validates the one-based task number supplied to a command.
      *
-     * @param command full command entered by the user
-     * @param commandName command word whose argument should be parsed
-     * @param taskCount number of tasks currently stored
-     * @return zero-based index of the selected task
-     * @throws WWaffleException if the task number is missing, invalid, or out of range
+     * @param command Full command entered by the user.
+     * @param commandName Command word whose argument should be parsed.
+     * @param taskCount Number of tasks currently stored.
+     * @return Zero-based index of the selected task.
+     * @throws WWaffleException If the task number is missing, invalid, or out of range.
      */
     public int parseTaskIndex(String command, String commandName, int taskCount)
             throws WWaffleException {
@@ -60,9 +66,9 @@ public class Parser {
     /**
      * Returns the text following a command word.
      *
-     * @param command full command entered by the user
-     * @param commandName command word to remove
-     * @return trimmed command argument
+     * @param command Full command entered by the user.
+     * @param commandName Command word to remove.
+     * @return Trimmed command argument.
      */
     public String parseArgument(String command, String commandName) {
         return command.substring(commandName.length()).trim();

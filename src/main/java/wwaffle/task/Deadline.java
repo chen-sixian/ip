@@ -10,30 +10,35 @@ public class Deadline extends Task {
     private static final DateTimeFormatter DISPLAY_FORMAT =
             DateTimeFormatter.ofPattern("MMM d yyyy");
 
-    protected LocalDate by;
+    private final LocalDate dueDate;
 
     /**
      * Creates an incomplete deadline with the given description and due time.
      *
-     * @param description description of the deadline
-     * @param by due date in {@code yyyy-MM-dd} format
+     * @param description Description of the deadline.
+     * @param by Due date in {@code yyyy-MM-dd} format.
      */
     public Deadline(String description, String by) {
         super(description);
-        this.by = LocalDate.parse(by);
+        this.dueDate = LocalDate.parse(by);
     }
 
-    public LocalDate getBy() {
-        return by;
+    /**
+     * Returns the due date.
+     *
+     * @return Due date.
+     */
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
     /**
      * Returns the deadline in its display format.
      *
-     * @return formatted deadline
+     * @return Formatted deadline.
      */
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + by.format(DISPLAY_FORMAT) + ")";
+        return "[D]" + super.toString() + " (by: " + dueDate.format(DISPLAY_FORMAT) + ")";
     }
 }
