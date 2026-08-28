@@ -33,12 +33,12 @@ public class Ui {
      * @param taskCount Number of tasks loaded from storage.
      */
     public void showWelcome(int taskCount) {
-        System.out.println(color(COLUMBIA_BLUE,
+        System.out.println(applyColor(COLUMBIA_BLUE,
                 "┌─[ WWAFFLE ]────────────────────────────────────────┐"));
-        System.out.println(color(COLUMBIA_BLUE, "│") + "  "
-                + color(DAY_SKY_BLUE, "System ready. ")
-                + color(BABY_BLUE, taskCount + " " + taskWord(taskCount) + " loaded."));
-        System.out.println(color(COLUMBIA_BLUE,
+        System.out.println(applyColor(COLUMBIA_BLUE, "│") + "  "
+                + applyColor(DAY_SKY_BLUE, "System ready. ")
+                + applyColor(BABY_BLUE, taskCount + " " + getTaskWord(taskCount) + " loaded."));
+        System.out.println(applyColor(COLUMBIA_BLUE,
                 "└────────────────────────────────────────────────────┘"));
     }
 
@@ -48,7 +48,7 @@ public class Ui {
      * @return Command entered by the user.
      */
     public String readCommand() {
-        System.out.print("\n" + color(COLUMBIA_BLUE, "└─> "));
+        System.out.print("\n" + applyColor(COLUMBIA_BLUE, "└─> "));
         if (useColor) {
             System.out.print(BLUEBERRY_BLUE);
         }
@@ -66,13 +66,13 @@ public class Ui {
      */
     public void showTaskList(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            System.out.println(color(DAY_SKY_BLUE, "[i] Your task list is empty."));
+            System.out.println(applyColor(DAY_SKY_BLUE, "[i] Your task list is empty."));
             return;
         }
 
-        System.out.println(color(ROYAL_BLUE, "[ TASKS ]"));
+        System.out.println(applyColor(ROYAL_BLUE, "[ TASKS ]"));
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(color(ROYAL_BLUE, "  " + (i + 1) + ". " + tasks.get(i)));
+            System.out.println(applyColor(ROYAL_BLUE, "  " + (i + 1) + ". " + tasks.get(i)));
         }
     }
 
@@ -83,10 +83,10 @@ public class Ui {
      * @param taskCount Number of tasks after the addition.
      */
     public void showTaskAdded(Task task, int taskCount) {
-        System.out.println(color(DENIM_BLUE, "[+] TASK ADDED"));
-        System.out.println(color(DAY_SKY_BLUE, "    " + task));
-        System.out.println(color(BABY_BLUE,
-                "    " + taskCount + " " + taskWord(taskCount) + " total."));
+        System.out.println(applyColor(DENIM_BLUE, "[+] TASK ADDED"));
+        System.out.println(applyColor(DAY_SKY_BLUE, "    " + task));
+        System.out.println(applyColor(BABY_BLUE,
+                "    " + taskCount + " " + getTaskWord(taskCount) + " total."));
     }
 
     /**
@@ -97,8 +97,8 @@ public class Ui {
      */
     public void showTaskMarked(Task task, boolean isDone) {
         String heading = isDone ? "[+] TASK COMPLETED" : "[+] TASK REOPENED";
-        System.out.println(color(DENIM_BLUE, heading));
-        System.out.println(color(DAY_SKY_BLUE, "    " + task));
+        System.out.println(applyColor(DENIM_BLUE, heading));
+        System.out.println(applyColor(DAY_SKY_BLUE, "    " + task));
     }
 
     /**
@@ -108,10 +108,10 @@ public class Ui {
      * @param taskCount Number of tasks remaining after deletion.
      */
     public void showTaskDeleted(Task task, int taskCount) {
-        System.out.println(color(BABY_BLUE, "[-] TASK DELETED"));
-        System.out.println(color(DAY_SKY_BLUE, "    " + task));
-        System.out.println(color(BABY_BLUE,
-                "    " + taskCount + " " + taskWord(taskCount) + " remaining."));
+        System.out.println(applyColor(BABY_BLUE, "[-] TASK DELETED"));
+        System.out.println(applyColor(DAY_SKY_BLUE, "    " + task));
+        System.out.println(applyColor(BABY_BLUE,
+                "    " + taskCount + " " + getTaskWord(taskCount) + " remaining."));
     }
 
     /**
@@ -120,7 +120,7 @@ public class Ui {
      * @param message Error explanation to display.
      */
     public void showError(String message) {
-        System.out.println(color(DAY_SKY_BLUE, "[!] " + message));
+        System.out.println(applyColor(DAY_SKY_BLUE, "[!] " + message));
     }
 
     /**
@@ -134,14 +134,14 @@ public class Ui {
      * Shows the farewell message.
      */
     public void showExit() {
-        System.out.println("\n" + color(DAY_SKY_BLUE, "System offline. Goodbye!"));
+        System.out.println("\n" + applyColor(DAY_SKY_BLUE, "System offline. Goodbye!"));
     }
 
-    private String color(String ansiColor, String text) {
+    private String applyColor(String ansiColor, String text) {
         return useColor ? ansiColor + text + RESET : text;
     }
 
-    private String taskWord(int count) {
+    private String getTaskWord(int count) {
         return count == 1 ? "task" : "tasks";
     }
 }

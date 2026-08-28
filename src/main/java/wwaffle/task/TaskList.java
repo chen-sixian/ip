@@ -53,7 +53,7 @@ public class TaskList {
      *
      * @return Number of tasks.
      */
-    public int size() {
+    public int getSize() {
         return tasks.size();
     }
 
@@ -62,7 +62,7 @@ public class TaskList {
      *
      * @return Unmodifiable task view.
      */
-    public List<Task> asList() {
+    public List<Task> getTasks() {
         return Collections.unmodifiableList(tasks);
     }
 }

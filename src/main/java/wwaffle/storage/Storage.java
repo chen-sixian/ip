@@ -76,20 +76,20 @@ public class Storage {
         Task task;
         try {
             task = switch (parts[0]) {
-            case "T" -> new Todo(parts[2]);
-            case "D" -> {
-                if (parts.length != 4) {
-                    throw new IOException("Invalid deadline data: " + line);
+                case "T" -> new Todo(parts[2]);
+                case "D" -> {
+                    if (parts.length != 4) {
+                        throw new IOException("Invalid deadline data: " + line);
+                    }
+                    yield new Deadline(parts[2], parts[3]);
                 }
-                yield new Deadline(parts[2], parts[3]);
-            }
-            case "E" -> {
-                if (parts.length != 5) {
-                    throw new IOException("Invalid event data: " + line);
+                case "E" -> {
+                    if (parts.length != 5) {
+                        throw new IOException("Invalid event data: " + line);
+                    }
+                    yield new Event(parts[2], parts[3], parts[4]);
                 }
-                yield new Event(parts[2], parts[3], parts[4]);
-            }
-            default -> throw new IOException("Unknown task type: " + parts[0]);
+                default -> throw new IOException("Unknown task type: " + parts[0]);
             };
         } catch (DateTimeParseException e) {
             throw new IOException("Invalid deadline date in saved data: " + line, e);
@@ -107,10 +107,11 @@ public class Storage {
         if (task instanceof Todo) {
             return "T | " + status + " | " + task.getDescription();
         } else if (task instanceof Deadline deadline) {
-            return "D | " + status + " | " + task.getDescription() + " | " + deadline.getBy();
+            return "D | " + status + " | " + task.getDescription()
+                    + " | " + deadline.getDueDate();
         } else if (task instanceof Event event) {
             return "E | " + status + " | " + task.getDescription()
-                    + " | " + event.getFrom() + " | " + event.getTo();
+                    + " | " + event.getStart() + " | " + event.getEnd();
         }
         throw new IOException("Unsupported task type");
     }

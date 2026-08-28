@@ -4,10 +4,8 @@ package wwaffle.task;
  * Represents a task that occurs between specified start and end times.
  */
 public class Event extends Task {
-    /** Start date or time of this event. */
-    protected String from;
-    /** End date or time of this event. */
-    protected String to;
+    private final String start;
+    private final String end;
 
     /**
      * Creates an incomplete event with the given description and times.
@@ -18,8 +16,8 @@ public class Event extends Task {
      */
     public Event(String description, String from, String to) {
         super(description);
-        this.from = from;
-        this.to = to;
+        this.start = from;
+        this.end = to;
     }
 
     /**
@@ -27,8 +25,8 @@ public class Event extends Task {
      *
      * @return Start date or time.
      */
-    public String getFrom() {
-        return from;
+    public String getStart() {
+        return start;
     }
 
     /**
@@ -36,8 +34,8 @@ public class Event extends Task {
      *
      * @return End date or time.
      */
-    public String getTo() {
-        return to;
+    public String getEnd() {
+        return end;
     }
 
     /**
@@ -47,6 +45,6 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
+        return "[E]" + super.toString() + " (from: " + start + " to: " + end + ")";
     }
 }

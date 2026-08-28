@@ -15,7 +15,7 @@ class TaskListTest {
 
         tasks.add(todo);
 
-        assertEquals(1, tasks.size());
+        assertEquals(1, tasks.getSize());
         assertEquals(todo, tasks.get(0));
     }
 
@@ -29,14 +29,14 @@ class TaskListTest {
         Task removedTask = tasks.delete(0);
 
         assertEquals(todo, removedTask);
-        assertEquals(0, tasks.size());
+        assertEquals(0, tasks.getSize());
     }
 
     @Test
-    void asList_returnedView_cannotBeModified() {
+    void getTasks_returnedView_cannotBeModified() {
         TaskList tasks = new TaskList(new ArrayList<>());
 
         assertThrows(UnsupportedOperationException.class,
-                () -> tasks.asList().add(new Todo("read book")));
+                () -> tasks.getTasks().add(new Todo("read book")));
     }
 }

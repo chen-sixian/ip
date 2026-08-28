@@ -21,15 +21,15 @@ public class Parser {
     public CommandType parseCommandType(String command) {
         String commandWord = command.split(" ", 2)[0];
         return switch (commandWord) {
-        case "list" -> CommandType.LIST;
-        case "mark" -> CommandType.MARK;
-        case "unmark" -> CommandType.UNMARK;
-        case "delete" -> CommandType.DELETE;
-        case "todo" -> CommandType.TODO;
-        case "deadline" -> CommandType.DEADLINE;
-        case "event" -> CommandType.EVENT;
-        case "bye" -> CommandType.BYE;
-        default -> CommandType.UNKNOWN;
+            case "list" -> CommandType.LIST;
+            case "mark" -> CommandType.MARK;
+            case "unmark" -> CommandType.UNMARK;
+            case "delete" -> CommandType.DELETE;
+            case "todo" -> CommandType.TODO;
+            case "deadline" -> CommandType.DEADLINE;
+            case "event" -> CommandType.EVENT;
+            case "bye" -> CommandType.BYE;
+            default -> CommandType.UNKNOWN;
         };
     }
 

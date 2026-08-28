@@ -4,10 +4,8 @@ package wwaffle.task;
  * Represents a task with a description and completion status.
  */
 public class Task {
-    /** Description of this task. */
-    protected String description;
-    /** Whether this task is complete. */
-    protected boolean isDone;
+    private final String description;
+    private boolean isDone;
 
     /**
      * Creates an incomplete task with the given description.
