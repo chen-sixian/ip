@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -86,7 +87,12 @@ public class WWaffle {
                     if (by.isBlank()) {
                         throw new WWaffleException("OOPS!!! A deadline must have a date or time after /by.");
                     }
-                    tasks.add(new Deadline(description, by));
+                    try {
+                        tasks.add(new Deadline(description, by));
+                    } catch (DateTimeParseException e) {
+                        throw new WWaffleException(
+                                "OOPS!!! Use a valid deadline date in yyyy-MM-dd format.");
+                    }
                     storage.save(tasks);
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + tasks.get(tasks.size() - 1));
