@@ -43,7 +43,7 @@ public class MainWindow {
     public void setWWaffle(WWaffle wwaffle) {
         this.wwaffle = wwaffle;
         refreshTaskStatus();
-        dialogContainer.getChildren().add(
+        addDialogBoxes(
                 DialogBox.getWWaffleDialog("Hello! I'm WWaffle.\n" + wwaffle.getWelcomeMessage()));
     }
 
@@ -62,8 +62,7 @@ public class MainWindow {
         }
 
         String response = wwaffle.getResponse(input);
-        dialogContainer.getChildren().add(DialogBox.getUserDialog(input));
-        dialogContainer.getChildren().add(DialogBox.getWWaffleDialog(response));
+        addDialogBoxes(DialogBox.getUserDialog(input), DialogBox.getWWaffleDialog(response));
         userInput.clear();
         refreshTaskStatus();
 
@@ -72,6 +71,17 @@ public class MainWindow {
             PauseTransition exitPause = new PauseTransition(EXIT_DELAY);
             exitPause.setOnFinished(event -> Platform.exit());
             exitPause.play();
+        }
+    }
+
+    /**
+     * Appends any number of dialog boxes to the conversation in the given order.
+     *
+     * @param dialogBoxes Dialog boxes to append.
+     */
+    private void addDialogBoxes(DialogBox... dialogBoxes) {
+        for (DialogBox dialogBox : dialogBoxes) {
+            dialogContainer.getChildren().add(dialogBox);
         }
     }
 
