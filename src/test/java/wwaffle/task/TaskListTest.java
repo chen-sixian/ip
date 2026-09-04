@@ -37,8 +37,7 @@ class TaskListTest {
     void getTasks_returnedView_cannotBeModified() {
         TaskList tasks = new TaskList(new ArrayList<>());
 
-        assertThrows(UnsupportedOperationException.class,
-                () -> tasks.getTasks().add(new Todo("read book")));
+        assertThrows(UnsupportedOperationException.class, () -> tasks.getTasks().add(new Todo("read book")));
     }
 
     @Test

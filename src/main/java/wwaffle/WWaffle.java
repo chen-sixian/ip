@@ -82,10 +82,10 @@ public class WWaffle {
             case DEADLINE -> addDeadline(command);
             case EVENT -> addEvent(command);
             case FIND -> findTasks(command);
-            case UNKNOWN -> throw new WWaffleException("Unknown command.");
             case BYE -> {
                 // The command loop handles exiting before execution.
             }
+            default -> throw new WWaffleException("Unknown command.");
         }
     }
 
