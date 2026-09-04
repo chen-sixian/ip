@@ -3,6 +3,7 @@ package wwaffle;
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 import wwaffle.command.CommandType;
 import wwaffle.command.Parser;
@@ -54,13 +55,56 @@ public class WWaffle {
 
         while (parser.parseCommandType(command) != CommandType.BYE) {
             try {
-                execute(command);
+                executeInTerminal(command);
             } catch (WWaffleException | IOException e) {
                 ui.showError(e.getMessage());
             }
             command = ui.readCommand();
         }
         ui.showExit();
+    }
+
+    /**
+     * Returns the welcome message used by graphical interfaces.
+     *
+     * @return Welcome message containing the number of loaded tasks.
+     */
+    public String getWelcomeMessage() {
+        return ui.getWelcomeMessage(tasks.getSize());
+    }
+
+    /**
+     * Returns the current number of tasks.
+     *
+     * @return Number of tasks stored by WWaffle.
+     */
+    public int getTaskCount() {
+        return tasks.getSize();
+    }
+
+    /**
+     * Executes a command and returns a plain-text response for a graphical interface.
+     *
+     * @param command Command entered by the user.
+     * @return User-facing response to the command.
+     */
+    public String getResponse(String command) {
+        try {
+            return switch (parser.parseCommandType(command)) {
+                case LIST -> ui.getTaskListMessage(tasks.getTasks());
+                case MARK -> ui.getTaskMarkedMessage(markTask(command, true), true);
+                case UNMARK -> ui.getTaskMarkedMessage(markTask(command, false), false);
+                case DELETE -> ui.getTaskDeletedMessage(deleteTask(command), tasks.getSize());
+                case TODO -> ui.getTaskAddedMessage(addTodo(command), tasks.getSize());
+                case DEADLINE -> ui.getTaskAddedMessage(addDeadline(command), tasks.getSize());
+                case EVENT -> ui.getTaskAddedMessage(addEvent(command), tasks.getSize());
+                case FIND -> ui.getMatchingTasksMessage(findTasks(command));
+                case BYE -> ui.getExitMessage();
+                default -> throw new WWaffleException("Unknown command.");
+            };
+        } catch (WWaffleException | IOException e) {
+            return ui.getErrorMessage(e.getMessage());
+        }
     }
 
     private ArrayList<Task> loadTasks() {
@@ -72,16 +116,16 @@ public class WWaffle {
         }
     }
 
-    private void execute(String command) throws WWaffleException, IOException {
+    private void executeInTerminal(String command) throws WWaffleException, IOException {
         switch (parser.parseCommandType(command)) {
             case LIST -> ui.showTaskList(tasks.getTasks());
-            case MARK -> markTask(command, true);
-            case UNMARK -> markTask(command, false);
-            case DELETE -> deleteTask(command);
-            case TODO -> addTodo(command);
-            case DEADLINE -> addDeadline(command);
-            case EVENT -> addEvent(command);
-            case FIND -> findTasks(command);
+            case MARK -> ui.showTaskMarked(markTask(command, true), true);
+            case UNMARK -> ui.showTaskMarked(markTask(command, false), false);
+            case DELETE -> ui.showTaskDeleted(deleteTask(command), tasks.getSize());
+            case TODO -> ui.showTaskAdded(addTodo(command), tasks.getSize());
+            case DEADLINE -> ui.showTaskAdded(addDeadline(command), tasks.getSize());
+            case EVENT -> ui.showTaskAdded(addEvent(command), tasks.getSize());
+            case FIND -> ui.showMatchingTasks(findTasks(command));
             case BYE -> {
                 // The command loop handles exiting before execution.
             }
@@ -89,7 +133,7 @@ public class WWaffle {
         }
     }
 
-    private void markTask(String command, boolean isDone) throws WWaffleException, IOException {
+    private Task markTask(String command, boolean isDone) throws WWaffleException, IOException {
         String commandName = isDone ? "mark" : "unmark";
         int taskIndex = parser.parseTaskIndex(command, commandName, tasks.getSize());
         Task task = tasks.get(taskIndex);
@@ -99,25 +143,25 @@ public class WWaffle {
             task.markAsNotDone();
         }
         storage.save(tasks.getTasks());
-        ui.showTaskMarked(task, isDone);
+        return task;
     }
 
-    private void deleteTask(String command) throws WWaffleException, IOException {
+    private Task deleteTask(String command) throws WWaffleException, IOException {
         int taskIndex = parser.parseTaskIndex(command, "delete", tasks.getSize());
         Task removedTask = tasks.delete(taskIndex);
         storage.save(tasks.getTasks());
-        ui.showTaskDeleted(removedTask, tasks.getSize());
+        return removedTask;
     }
 
-    private void addTodo(String command) throws WWaffleException, IOException {
+    private Task addTodo(String command) throws WWaffleException, IOException {
         String description = parser.parseArgument(command, "todo");
         if (description.isBlank()) {
             throw new WWaffleException("A todo description cannot be empty.");
         }
-        addTask(new Todo(description));
+        return addTask(new Todo(description));
     }
 
-    private void addDeadline(String command) throws WWaffleException, IOException {
+    private Task addDeadline(String command) throws WWaffleException, IOException {
         String details = parser.parseArgument(command, "deadline");
         int byIndex = details.indexOf(" /by ");
         if (byIndex < 0) {
@@ -131,13 +175,13 @@ public class WWaffle {
         }
 
         try {
-            addTask(new Deadline(description, by));
+            return addTask(new Deadline(description, by));
         } catch (DateTimeParseException e) {
             throw new WWaffleException("Invalid date. Expected yyyy-MM-dd, e.g. 2026-12-02.");
         }
     }
 
-    private void addEvent(String command) throws WWaffleException, IOException {
+    private Task addEvent(String command) throws WWaffleException, IOException {
         String details = parser.parseArgument(command, "event");
         int fromIndex = details.indexOf(" /from ");
         if (fromIndex < 0) {
@@ -156,20 +200,20 @@ public class WWaffle {
         if (description.isBlank() || from.isBlank() || to.isBlank()) {
             throw new WWaffleException("An event needs a description, start, and end.");
         }
-        addTask(new Event(description, from, to));
+        return addTask(new Event(description, from, to));
     }
 
-    private void findTasks(String command) throws WWaffleException {
+    private List<Task> findTasks(String command) throws WWaffleException {
         String keyword = parser.parseArgument(command, "find");
         if (keyword.isBlank()) {
             throw new WWaffleException("Use: find <keyword>.");
         }
-        ui.showMatchingTasks(tasks.find(keyword));
+        return tasks.find(keyword);
     }
 
-    private void addTask(Task task) throws IOException {
+    private Task addTask(Task task) throws IOException {
         tasks.add(task);
         storage.save(tasks.getTasks());
-        ui.showTaskAdded(task, tasks.getSize());
+        return task;
     }
 }

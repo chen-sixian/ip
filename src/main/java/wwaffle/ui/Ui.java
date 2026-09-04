@@ -72,6 +72,108 @@ public class Ui {
     }
 
     /**
+     * Returns a concise welcome message for non-terminal interfaces.
+     *
+     * @param taskCount Number of tasks loaded from storage.
+     * @return Plain-text welcome message.
+     */
+    public String getWelcomeMessage(int taskCount) {
+        return "System ready. " + taskCount + " " + getTaskWord(taskCount)
+                + " loaded.\nType a command below to get started.";
+    }
+
+    /**
+     * Formats all tasks with their one-based list numbers.
+     *
+     * @param tasks Tasks to format.
+     * @return Plain-text task list.
+     */
+    public String getTaskListMessage(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            return "[i] Your task list is empty.";
+        }
+
+        StringBuilder message = new StringBuilder("[ TASKS ]");
+        for (int i = 0; i < tasks.size(); i++) {
+            message.append("\n").append(i + 1).append(". ").append(tasks.get(i));
+        }
+        return message.toString();
+    }
+
+    /**
+     * Formats tasks that match a search keyword.
+     *
+     * @param tasks Matching tasks.
+     * @return Plain-text search result.
+     */
+    public String getMatchingTasksMessage(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            return "[i] No matching tasks found.";
+        }
+
+        StringBuilder message = new StringBuilder("[ MATCHES ]");
+        for (int i = 0; i < tasks.size(); i++) {
+            message.append("\n").append(i + 1).append(". ").append(tasks.get(i));
+        }
+        return message.toString();
+    }
+
+    /**
+     * Formats confirmation that a task was added.
+     *
+     * @param task Added task.
+     * @param taskCount Number of tasks after the addition.
+     * @return Plain-text confirmation.
+     */
+    public String getTaskAddedMessage(Task task, int taskCount) {
+        return "[+] TASK ADDED\n" + task + "\n" + taskCount + " "
+                + getTaskWord(taskCount) + " total.";
+    }
+
+    /**
+     * Formats confirmation that a task's completion state changed.
+     *
+     * @param task Updated task.
+     * @param isDone Whether the task is now complete.
+     * @return Plain-text confirmation.
+     */
+    public String getTaskMarkedMessage(Task task, boolean isDone) {
+        String heading = isDone ? "[+] TASK COMPLETED" : "[+] TASK REOPENED";
+        return heading + "\n" + task;
+    }
+
+    /**
+     * Formats confirmation that a task was deleted.
+     *
+     * @param task Deleted task.
+     * @param taskCount Number of tasks remaining after deletion.
+     * @return Plain-text confirmation.
+     */
+    public String getTaskDeletedMessage(Task task, int taskCount) {
+        return "[-] TASK DELETED\n" + task + "\n" + taskCount + " "
+                + getTaskWord(taskCount) + " remaining.";
+    }
+
+    /**
+     * Formats a user-facing error message.
+     *
+     * @param message Error explanation.
+     * @return Plain-text error message.
+     */
+    public String getErrorMessage(String message) {
+        return "[!] " + message;
+    }
+
+    /**
+     * Returns the farewell message for non-terminal interfaces.
+     *
+     * @return Plain-text farewell message.
+     */
+    public String getExitMessage() {
+        return "System offline. Goodbye!";
+    }
+
+    /**
      * Shows all tasks with their one-based list numbers.
      *
      * @param tasks Tasks to display.
