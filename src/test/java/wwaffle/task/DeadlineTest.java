@@ -18,8 +18,7 @@ class DeadlineTest {
 
     @Test
     void constructor_invalidDate_throwsDateTimeParseException() {
-        assertThrows(DateTimeParseException.class,
-                () -> new Deadline("return book", "tomorrow"));
+        assertThrows(DateTimeParseException.class, () -> new Deadline("return book", "tomorrow"));
     }
 
     @Test

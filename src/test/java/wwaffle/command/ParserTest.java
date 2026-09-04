@@ -31,11 +31,8 @@ class ParserTest {
 
     @Test
     void parseTaskIndex_invalidArguments_throwWWaffleException() {
-        assertThrows(WWaffleException.class,
-                () -> parser.parseTaskIndex("mark", "mark", 3));
-        assertThrows(WWaffleException.class,
-                () -> parser.parseTaskIndex("mark two", "mark", 3));
-        assertThrows(WWaffleException.class,
-                () -> parser.parseTaskIndex("mark 4", "mark", 3));
+        assertThrows(WWaffleException.class, () -> parser.parseTaskIndex("mark", "mark", 3));
+        assertThrows(WWaffleException.class, () -> parser.parseTaskIndex("mark two", "mark", 3));
+        assertThrows(WWaffleException.class, () -> parser.parseTaskIndex("mark 4", "mark", 3));
     }
 }
