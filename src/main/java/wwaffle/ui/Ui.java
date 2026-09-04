@@ -16,6 +16,15 @@ public class Ui {
     private static final String DAY_SKY_BLUE = "\u001B[38;2;130;202;255m";
     private static final String BABY_BLUE = "\u001B[38;2;149;185;199m";
     private static final String DENIM_BLUE = "\u001B[38;2;121;186;236m";
+    private static final String[] WORDMARK = {
+        " __        ____        ___    _____ _____ _     _____ ",
+        " \\ \\      / /\\ \\      / / \\  |  ___|  ___| |   | ____|",
+        "  \\ \\ /\\ / /  \\ \\ /\\ / / _ \\ | |_  | |_  | |   |  _|  ",
+        "   \\ V  V /    \\ V  V / ___ \\|  _| |  _| | |___| |___ ",
+        "    \\_/\\_/      \\_/\\_/_/   \\_\\_|   |_|   |_____|_____|"
+    };
+    private static final String DIVIDER =
+            "──────────────────────────────────────────────────────────";
 
     private final Scanner scanner = new Scanner(System.in);
     private final boolean useColor;
@@ -33,13 +42,15 @@ public class Ui {
      * @param taskCount Number of tasks loaded from storage.
      */
     public void showWelcome(int taskCount) {
-        System.out.println(applyColor(COLUMBIA_BLUE,
-                "┌─[ WWAFFLE ]────────────────────────────────────────┐"));
-        System.out.println(applyColor(COLUMBIA_BLUE, "│") + "  "
-                + applyColor(DAY_SKY_BLUE, "System ready. ")
-                + applyColor(BABY_BLUE, taskCount + " " + getTaskWord(taskCount) + " loaded."));
-        System.out.println(applyColor(COLUMBIA_BLUE,
-                "└────────────────────────────────────────────────────┘"));
+        System.out.println();
+        for (String line : WORDMARK) {
+            System.out.println(applyColor(ROYAL_BLUE, line));
+        }
+        System.out.println();
+        System.out.println(applyColor(DAY_SKY_BLUE, " PERSONAL TASK MANAGER")
+                + applyColor(BABY_BLUE, "  ·  " + taskCount + " "
+                        + getTaskWord(taskCount).toUpperCase() + " READY"));
+        System.out.println(applyColor(COLUMBIA_BLUE, DIVIDER));
     }
 
     /**
@@ -48,7 +59,8 @@ public class Ui {
      * @return Command entered by the user.
      */
     public String readCommand() {
-        System.out.print("\n" + applyColor(COLUMBIA_BLUE, "└─> "));
+        System.out.print("\n" + applyColor(COLUMBIA_BLUE, "COMMAND ")
+                + applyColor(DAY_SKY_BLUE, "› "));
         if (useColor) {
             System.out.print(BLUEBERRY_BLUE);
         }
