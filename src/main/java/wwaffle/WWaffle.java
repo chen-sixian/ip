@@ -20,6 +20,10 @@ import wwaffle.ui.Ui;
  * Coordinates user input, task management, and persistent storage.
  */
 public class WWaffle {
+    private static final String DEADLINE_SEPARATOR = " /by ";
+    private static final String EVENT_START_SEPARATOR = " /from ";
+    private static final String EVENT_END_SEPARATOR = " /to ";
+
     private final Parser parser;
     private final Storage storage;
     private final TaskList tasks;
@@ -163,13 +167,13 @@ public class WWaffle {
 
     private Task addDeadline(String command) throws WWaffleException, IOException {
         String details = parser.parseArgument(command, "deadline");
-        int byIndex = details.indexOf(" /by ");
+        int byIndex = details.indexOf(DEADLINE_SEPARATOR);
         if (byIndex < 0) {
             throw new WWaffleException("Use: deadline <description> /by <yyyy-MM-dd>.");
         }
 
         String description = details.substring(0, byIndex);
-        String by = details.substring(byIndex + 5);
+        String by = details.substring(byIndex + DEADLINE_SEPARATOR.length());
         if (description.isBlank() || by.isBlank()) {
             throw new WWaffleException("A deadline needs a description and date.");
         }
@@ -183,20 +187,20 @@ public class WWaffle {
 
     private Task addEvent(String command) throws WWaffleException, IOException {
         String details = parser.parseArgument(command, "event");
-        int fromIndex = details.indexOf(" /from ");
+        int fromIndex = details.indexOf(EVENT_START_SEPARATOR);
         if (fromIndex < 0) {
             throw new WWaffleException("Use: event <description> /from <start> /to <end>.");
         }
 
         String description = details.substring(0, fromIndex);
-        String times = details.substring(fromIndex + 7);
-        int toIndex = times.indexOf(" /to ");
+        String times = details.substring(fromIndex + EVENT_START_SEPARATOR.length());
+        int toIndex = times.indexOf(EVENT_END_SEPARATOR);
         if (toIndex < 0) {
             throw new WWaffleException("Use: event <description> /from <start> /to <end>.");
         }
 
         String from = times.substring(0, toIndex);
-        String to = times.substring(toIndex + 5);
+        String to = times.substring(toIndex + EVENT_END_SEPARATOR.length());
         if (description.isBlank() || from.isBlank() || to.isBlank()) {
             throw new WWaffleException("An event needs a description, start, and end.");
         }
