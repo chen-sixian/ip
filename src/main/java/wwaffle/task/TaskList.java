@@ -2,6 +2,7 @@ package wwaffle.task;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -74,6 +75,20 @@ public class TaskList {
         return tasks.stream()
                 .filter(task -> task.getDescription().toLowerCase(Locale.ROOT).contains(normalizedKeyword))
                 .toList();
+    }
+
+    /**
+     * Sorts descriptions ignoring case, preserving the order of equal descriptions.
+     */
+    public void sortByName() {
+        tasks.sort(Comparator.comparing(Task::getDescription, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    /**
+     * Places unfinished tasks first, preserving the order within each status group.
+     */
+    public void sortByStatus() {
+        tasks.sort(Comparator.comparing(Task::isDone));
     }
 
     /**
