@@ -20,6 +20,8 @@ public enum CommandType {
     EVENT,
     /** Finds tasks containing a keyword. */
     FIND,
+    /** Sorts tasks by description or completion status. */
+    SORT,
     /** Exits the application. */
     BYE,
     /** Represents an unsupported command. */

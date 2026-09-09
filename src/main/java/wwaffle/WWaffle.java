@@ -96,6 +96,7 @@ public class WWaffle {
         try {
             return switch (parser.parseCommandType(command)) {
                 case LIST -> ui.getTaskListMessage(tasks.getTasks());
+                case SORT -> ui.getTaskListMessage(sortTasks(command));
                 case MARK -> ui.getTaskMarkedMessage(markTask(command, true), true);
                 case UNMARK -> ui.getTaskMarkedMessage(markTask(command, false), false);
                 case DELETE -> ui.getTaskDeletedMessage(deleteTask(command), tasks.getSize());
@@ -123,6 +124,7 @@ public class WWaffle {
     private void executeInTerminal(String command) throws WWaffleException, IOException {
         switch (parser.parseCommandType(command)) {
             case LIST -> ui.showTaskList(tasks.getTasks());
+            case SORT -> ui.showTaskList(sortTasks(command));
             case MARK -> ui.showTaskMarked(markTask(command, true), true);
             case UNMARK -> ui.showTaskMarked(markTask(command, false), false);
             case DELETE -> ui.showTaskDeleted(deleteTask(command), tasks.getSize());
@@ -213,6 +215,25 @@ public class WWaffle {
             throw new WWaffleException("Use: find <keyword>.");
         }
         return tasks.find(keyword);
+    }
+
+    /**
+     * Validates the sort key, reorders tasks once, and persists their new order.
+     *
+     * @param command Full sort command.
+     * @return Tasks in their new display order.
+     * @throws WWaffleException If the sort key is unsupported or missing.
+     * @throws IOException If the reordered tasks cannot be saved.
+     */
+    private List<Task> sortTasks(String command) throws WWaffleException, IOException {
+        String sortKey = parser.parseArgument(command, "sort");
+        switch (sortKey) {
+            case "name" -> tasks.sortByName();
+            case "status" -> tasks.sortByStatus();
+            default -> throw new WWaffleException("Use: sort name or sort status.");
+        }
+        storage.save(tasks.getTasks());
+        return tasks.getTasks();
     }
 
     private Task addTask(Task task) throws IOException {
