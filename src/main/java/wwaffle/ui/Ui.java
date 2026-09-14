@@ -27,13 +27,13 @@ public class Ui {
             "──────────────────────────────────────────────────────────";
 
     private final Scanner scanner = new Scanner(System.in);
-    private final boolean useColor;
+    private final boolean isColorEnabled;
 
     /**
      * Creates a UI, enabling colour unless the {@code wwaffle.color} system property is false.
      */
     public Ui() {
-        this.useColor = Boolean.parseBoolean(System.getProperty("wwaffle.color", "true"));
+        this.isColorEnabled = Boolean.parseBoolean(System.getProperty("wwaffle.color", "true"));
     }
 
     /**
@@ -61,11 +61,11 @@ public class Ui {
     public String readCommand() {
         System.out.print("\n" + applyColor(COLUMBIA_BLUE, "COMMAND ")
                 + applyColor(DAY_SKY_BLUE, "› "));
-        if (useColor) {
+        if (isColorEnabled) {
             System.out.print(BLUEBERRY_BLUE);
         }
         String command = scanner.nextLine();
-        if (useColor) {
+        if (isColorEnabled) {
             System.out.print(RESET);
         }
         return command;
@@ -269,7 +269,7 @@ public class Ui {
     }
 
     private String applyColor(String ansiColor, String text) {
-        return useColor ? ansiColor + text + RESET : text;
+        return isColorEnabled ? ansiColor + text + RESET : text;
     }
 
     private String getTaskWord(int count) {
