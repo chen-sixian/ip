@@ -31,8 +31,8 @@ public class Main extends Application {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("WWaffle — Personal Task Manager");
-            stage.setMinWidth(500);
-            stage.setMinHeight(620);
+            stage.setMinWidth(400);
+            stage.setMinHeight(420);
             stage.show();
             controller.focusCommandBox();
         } catch (IOException e) {

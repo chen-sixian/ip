@@ -22,6 +22,12 @@ public enum CommandType {
     FIND,
     /** Sorts tasks by description or completion status. */
     SORT,
+    /** Removes every task from the list. */
+    CLEAR,
+    /** Responds to a friendly greeting. */
+    GREETING,
+    /** Responds to appreciation. */
+    THANKS,
     /** Exits the application. */
     BYE,
     /** Represents an unsupported command. */

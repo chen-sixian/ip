@@ -2,9 +2,11 @@ package wwaffle.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
@@ -19,6 +21,16 @@ import wwaffle.task.Todo;
 class StorageTest {
     @TempDir
     private Path temporaryDirectory;
+
+    @Test
+    void load_malformedRecords_areRejected() throws IOException {
+        Path file = temporaryDirectory.resolve("bad.txt");
+        for (String record : new String[]{"T | 0", "T | 2 | task", "T | 0 | ", "T | 0 | task | extra",
+            "D | 0 | task | 2026-02-30", "E | 0 | task |  | end", "Z | 0 | task"}) {
+            Files.writeString(file, record);
+            assertThrows(IOException.class, () -> new Storage(file.toString()).load(), record);
+        }
+    }
 
     @Test
     void load_missingFile_returnsEmptyTaskList() throws IOException {

@@ -10,6 +10,6 @@ Use a temporary working directory to avoid changing your real tasks.
 6. Run `mark 2`: zebra must be marked, using its new index.
 7. Add `todo aardvark`: it must appear last, without automatic sorting.
 8. Try `sort`, `sort date`, `sort NAME`, and `sort name extra`: expect
-   `[!] Use: sort name or sort status.` with no change to the list or saved order.
+   `⚠️ No idea 🧇 Try "sort name" or "sort status".` with no change to the list or saved order.
 9. Repeat sorting on a list with todos, deadlines, and events; details and task counts stay intact.
 10. Repeat the command checks in both the terminal interface and JavaFX interface.

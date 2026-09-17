@@ -16,6 +16,7 @@ class ParserTest {
         assertEquals(CommandType.DEADLINE,
                 parser.parseCommandType("deadline submit work /by 2026-08-31"));
         assertEquals(CommandType.FIND, parser.parseCommandType("find book"));
+        assertEquals(CommandType.CLEAR, parser.parseCommandType("clear"));
         assertEquals(CommandType.BYE, parser.parseCommandType("bye"));
     }
 

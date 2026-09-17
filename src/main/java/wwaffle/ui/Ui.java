@@ -3,7 +3,10 @@ package wwaffle.ui;
 import java.util.List;
 import java.util.Scanner;
 
+import wwaffle.task.Deadline;
+import wwaffle.task.Event;
 import wwaffle.task.Task;
+import wwaffle.task.Todo;
 
 /**
  * Handles terminal input and presentation for WWaffle.
@@ -78,8 +81,10 @@ public class Ui {
      * @return Plain-text welcome message.
      */
     public String getWelcomeMessage(int taskCount) {
-        return "System ready. " + taskCount + " " + getTaskWord(taskCount)
-                + " loaded.\nType a command below to get started.";
+        if (taskCount == 0) {
+            return "Welcome back. ☕\nNo tasks yet.";
+        }
+        return "Welcome back. ☕\n" + taskCount + " " + getTaskWord(taskCount) + " loaded.";
     }
 
     /**
@@ -90,10 +95,30 @@ public class Ui {
      */
     public String getTaskListMessage(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            return "[i] Your task list is empty.";
+            return "Nothing here. Nature is healing. 🥐";
         }
 
-        StringBuilder message = new StringBuilder("[ TASKS ]");
+        StringBuilder message = new StringBuilder("Here are your little problems, neatly arranged. ☕");
+        for (int i = 0; i < tasks.size(); i++) {
+            message.append("\n").append(i + 1).append(". ").append(tasks.get(i));
+        }
+        return message.toString();
+    }
+
+    /**
+     * Formats a sorted task list and states the key used to arrange it.
+     *
+     * @param tasks Tasks in their newly sorted order.
+     * @param sortKey Validated key used for sorting.
+     * @return Plain-text sorted task list.
+     */
+    public String getSortedTaskListMessage(List<Task> tasks, String sortKey) {
+        if (tasks.isEmpty()) {
+            return "Nothing here. Nature is healing. 🥐";
+        }
+
+        StringBuilder message = new StringBuilder("Here are your little problems, neatly arranged by ")
+                .append(sortKey.toUpperCase()).append(". ☕");
         for (int i = 0; i < tasks.size(); i++) {
             message.append("\n").append(i + 1).append(". ").append(tasks.get(i));
         }
@@ -108,10 +133,10 @@ public class Ui {
      */
     public String getMatchingTasksMessage(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            return "[i] No matching tasks found.";
+            return "Nothing. Absolutely nothing. Have a cookie instead. 🍪";
         }
 
-        StringBuilder message = new StringBuilder("[ MATCHES ]");
+        StringBuilder message = new StringBuilder("Found these little guys. 🔍");
         for (int i = 0; i < tasks.size(); i++) {
             message.append("\n").append(i + 1).append(". ").append(tasks.get(i));
         }
@@ -126,8 +151,17 @@ public class Ui {
      * @return Plain-text confirmation.
      */
     public String getTaskAddedMessage(Task task, int taskCount) {
-        return "[+] TASK ADDED\n" + task + "\n" + taskCount + " "
-                + getTaskWord(taskCount) + " total.";
+        if (task instanceof Todo) {
+            return "Task added. 🧁\n" + task + "\n" + taskCount + " " + getTaskWord(taskCount) + " total.";
+        }
+        if (task instanceof Deadline) {
+            return "Deadline added. 🧁\n" + task + "\n" + taskCount + " " + getTaskWord(taskCount) + " total.";
+        }
+        if (task instanceof Event) {
+            return "Event added. 🧁\n" + task + "\n" + taskCount + " " + getTaskWord(taskCount) + " total.";
+        }
+        return "Another task has joined your little list:\n" + task + "\nYou now have " + taskCount + " "
+                + getTaskWord(taskCount) + ". Grab a coffee and get moving. ☕";
     }
 
     /**
@@ -138,7 +172,7 @@ public class Ui {
      * @return Plain-text confirmation.
      */
     public String getTaskMarkedMessage(Task task, boolean isDone) {
-        String heading = isDone ? "[+] TASK COMPLETED" : "[+] TASK REOPENED";
+        String heading = isDone ? "Task marked. 🤩" : "Task unmarked. 😑";
         return heading + "\n" + task;
     }
 
@@ -150,8 +184,8 @@ public class Ui {
      * @return Plain-text confirmation.
      */
     public String getTaskDeletedMessage(Task task, int taskCount) {
-        return "[-] TASK DELETED\n" + task + "\n" + taskCount + " "
-                + getTaskWord(taskCount) + " remaining.";
+        return "Task deleted. ☀️\n" + task + "\nYou have " + taskCount + " "
+                + getTaskWord(taskCount) + " left.";
     }
 
     /**
@@ -161,7 +195,7 @@ public class Ui {
      * @return Plain-text error message.
      */
     public String getErrorMessage(String message) {
-        return "[!] " + message;
+        return "⚠️ " + message;
     }
 
     /**
@@ -170,7 +204,7 @@ public class Ui {
      * @return Plain-text farewell message.
      */
     public String getExitMessage() {
-        return "System offline. Goodbye!";
+        return "Goodbye. 👋";
     }
 
     /**
@@ -179,15 +213,7 @@ public class Ui {
      * @param tasks Tasks to display.
      */
     public void showTaskList(List<Task> tasks) {
-        if (tasks.isEmpty()) {
-            System.out.println(applyColor(DAY_SKY_BLUE, "[i] Your task list is empty."));
-            return;
-        }
-
-        System.out.println(applyColor(ROYAL_BLUE, "[ TASKS ]"));
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(applyColor(ROYAL_BLUE, "  " + (i + 1) + ". " + tasks.get(i)));
-        }
+        System.out.println(applyColor(DAY_SKY_BLUE, getTaskListMessage(tasks)));
     }
 
     /**
@@ -196,15 +222,7 @@ public class Ui {
      * @param tasks Matching tasks.
      */
     public void showMatchingTasks(List<Task> tasks) {
-        if (tasks.isEmpty()) {
-            System.out.println(applyColor(DAY_SKY_BLUE, "[i] No matching tasks found."));
-            return;
-        }
-
-        System.out.println(applyColor(ROYAL_BLUE, "[ MATCHES ]"));
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(applyColor(ROYAL_BLUE, "  " + (i + 1) + ". " + tasks.get(i)));
-        }
+        System.out.println(applyColor(DAY_SKY_BLUE, getMatchingTasksMessage(tasks)));
     }
 
     /**
@@ -214,10 +232,7 @@ public class Ui {
      * @param taskCount Number of tasks after the addition.
      */
     public void showTaskAdded(Task task, int taskCount) {
-        System.out.println(applyColor(DENIM_BLUE, "[+] TASK ADDED"));
-        System.out.println(applyColor(DAY_SKY_BLUE, "    " + task));
-        System.out.println(applyColor(BABY_BLUE,
-                "    " + taskCount + " " + getTaskWord(taskCount) + " total."));
+        System.out.println(applyColor(DAY_SKY_BLUE, getTaskAddedMessage(task, taskCount)));
     }
 
     /**
@@ -227,9 +242,7 @@ public class Ui {
      * @param isDone Whether the task is now complete.
      */
     public void showTaskMarked(Task task, boolean isDone) {
-        String heading = isDone ? "[+] TASK COMPLETED" : "[+] TASK REOPENED";
-        System.out.println(applyColor(DENIM_BLUE, heading));
-        System.out.println(applyColor(DAY_SKY_BLUE, "    " + task));
+        System.out.println(applyColor(DAY_SKY_BLUE, getTaskMarkedMessage(task, isDone)));
     }
 
     /**
@@ -239,10 +252,7 @@ public class Ui {
      * @param taskCount Number of tasks remaining after deletion.
      */
     public void showTaskDeleted(Task task, int taskCount) {
-        System.out.println(applyColor(BABY_BLUE, "[-] TASK DELETED"));
-        System.out.println(applyColor(DAY_SKY_BLUE, "    " + task));
-        System.out.println(applyColor(BABY_BLUE,
-                "    " + taskCount + " " + getTaskWord(taskCount) + " remaining."));
+        System.out.println(applyColor(DAY_SKY_BLUE, getTaskDeletedMessage(task, taskCount)));
     }
 
     /**
@@ -251,21 +261,39 @@ public class Ui {
      * @param message Error explanation to display.
      */
     public void showError(String message) {
-        System.out.println(applyColor(DAY_SKY_BLUE, "[!] " + message));
+        System.out.println(applyColor(DAY_SKY_BLUE, "⚠️ " + message));
     }
 
     /**
      * Shows the standard error for a failed storage load.
      */
     public void showLoadingError() {
-        showError("Saved tasks could not be loaded. Starting with an empty list.");
+        showError("I couldn't load your saved tasks. Please check the task file before continuing. ⚠️");
     }
 
     /**
      * Shows the farewell message.
      */
     public void showExit() {
-        System.out.println("\n" + applyColor(DAY_SKY_BLUE, "System offline. Goodbye!"));
+        System.out.println("\n" + applyColor(DAY_SKY_BLUE, getExitMessage()));
+    }
+
+    /**
+     * Returns the concise greeting shared by all greeting commands.
+     *
+     * @return Greeting response.
+     */
+    public String getGreetingMessage() {
+        return "Hey there. ☕";
+    }
+
+    /**
+     * Returns a short acknowledgement of appreciation.
+     *
+     * @return Thanks response.
+     */
+    public String getThanksMessage() {
+        return "Anytime. 🧁";
     }
 
     private String applyColor(String ansiColor, String text) {

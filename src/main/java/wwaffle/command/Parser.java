@@ -1,5 +1,7 @@
 package wwaffle.command;
 
+import java.util.Locale;
+
 import wwaffle.exception.WWaffleException;
 
 /**
@@ -19,6 +21,22 @@ public class Parser {
      * @return Matching command type, or {@link CommandType#UNKNOWN}.
      */
     public CommandType parseCommandType(String command) {
+        // Match whole social phrases so task descriptions never trigger small talk.
+        String phrase = command.strip().toLowerCase(Locale.ROOT).replaceAll("\\s+", " ");
+        switch (phrase) {
+            case "hi", "hello", "hey", "hey there" -> {
+                return CommandType.GREETING;
+            }
+            case "thanks", "thank you" -> {
+                return CommandType.THANKS;
+            }
+            case "bye", "goodbye", "see you", "see you next time" -> {
+                return CommandType.BYE;
+            }
+            default -> {
+                // Task commands keep their existing syntax and case sensitivity.
+            }
+        }
         String commandWord = command.split(" ", 2)[0];
         return switch (commandWord) {
             case "list" -> CommandType.LIST;
@@ -30,6 +48,7 @@ public class Parser {
             case "event" -> CommandType.EVENT;
             case "find" -> CommandType.FIND;
             case "sort" -> CommandType.SORT;
+            case "clear" -> CommandType.CLEAR;
             case "bye" -> CommandType.BYE;
             default -> CommandType.UNKNOWN;
         };
@@ -48,19 +67,20 @@ public class Parser {
             throws WWaffleException {
         String numberText = command.substring(commandName.length()).trim();
         if (numberText.isEmpty()) {
-            throw new WWaffleException("Use: " + commandName + " <task number>.");
+            throw new WWaffleException("No idea 🧇\nTry: " + commandName + " <task number>.");
         }
 
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(numberText);
         } catch (NumberFormatException e) {
-            throw new WWaffleException("The task number must be a whole number.");
+            throw new WWaffleException("No idea 🧇\nTry a whole task number, e.g. 1.");
         }
 
         int taskIndex = taskNumber - 1;
         if (taskIndex < 0 || taskIndex >= taskCount) {
-            throw new WWaffleException("There is no task numbered " + taskNumber + ".");
+            throw new WWaffleException("No idea 🧇\nTask " + taskNumber
+                    + " isn't on your list. Try list to check the numbers.");
         }
         return taskIndex;
     }

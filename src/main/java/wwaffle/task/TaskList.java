@@ -91,6 +91,11 @@ public class TaskList {
         tasks.sort(Comparator.comparing(Task::isDone));
     }
 
+    /** Removes every task from the list. */
+    public void clear() {
+        tasks.clear();
+    }
+
     /**
      * Returns a read-only view suitable for display and persistence.
      *

@@ -1,8 +1,10 @@
 package wwaffle.storage;
 
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +66,19 @@ public class Storage {
         for (Task task : tasks) {
             lines.add(formatTask(task));
         }
-        Files.write(filePath, lines);
+        // Write completely before replacing the original file to avoid partially saved lists.
+        Path target = filePath.toAbsolutePath();
+        Path temporary = Files.createTempFile(target.getParent(), "wwaffle-", ".tmp");
+        try {
+            Files.write(temporary, lines);
+            try {
+                Files.move(temporary, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(temporary);
+        }
     }
 
     private Task parseTask(String line) throws IOException {
@@ -73,10 +87,18 @@ public class Storage {
             throw new IOException("Invalid task data: " + line);
         }
 
+        if (!(parts[1].equals("0") || parts[1].equals("1")) || parts[2].isBlank()) {
+            throw new IOException("Invalid task status or empty description.");
+        }
         Task task;
         try {
             task = switch (parts[0]) {
-                case "T" -> new Todo(parts[2]);
+                case "T" -> {
+                    if (parts.length != 3) {
+                        throw new IOException("Invalid todo fields.");
+                    }
+                    yield new Todo(parts[2]);
+                }
                 case "D" -> {
                     if (parts.length != 4) {
                         throw new IOException("Invalid deadline data: " + line);
@@ -84,7 +106,7 @@ public class Storage {
                     yield new Deadline(parts[2], parts[3]);
                 }
                 case "E" -> {
-                    if (parts.length != 5) {
+                    if (parts.length != 5 || parts[3].isBlank() || parts[4].isBlank()) {
                         throw new IOException("Invalid event data: " + line);
                     }
                     yield new Event(parts[2], parts[3], parts[4]);
